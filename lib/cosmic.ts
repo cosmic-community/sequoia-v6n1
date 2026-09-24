@@ -46,9 +46,12 @@ export function formatDate(dateString?: string): string {
 
 function getSortValue(item: {
   created_at: string;
-  metadata?: { published_at?: string };
+  metadata?: object | null;
 }): number {
-  const raw = item.metadata?.published_at || item.created_at;
+  const meta = item.metadata as { published_at?: unknown } | null | undefined;
+  const published =
+    typeof meta?.published_at === 'string' ? meta.published_at : undefined;
+  const raw = published || item.created_at;
   const time = raw ? Date.parse(raw) : NaN;
   return Number.isNaN(time) ? 0 : time;
 }
